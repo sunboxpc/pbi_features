@@ -1,0 +1,25 @@
+Calendar = CALENDARAUTO()
+
+StartOfMonth = STARTOFMONTH('Calendar'[Date])
+
+is_last_period = 
+IF(
+	CONTAINS(Fact_table,Fact_table[Период отчета],'Calendar'[StartOfMonth]),1,0)
+
+Slicer Period = 
+var last_actual_month = CALCULATE(MAX('Calendar'[StartOfMonth]), FILTER('Calendar','Calendar'[is_last_period] = 1))
+var cal = IF(
+    'Calendar'[StartOfMonth] = last_actual_month, "Последний месяц",
+    IF(
+        'Calendar'[StartOfMonth] < MAX('Calendar'[Calendar = CALENDARAUTO()]), FORMAT('Calendar'[StartOfMonth], "MMMM YYYY")
+    )
+)
+return cal
+
+-- [Slicer Period] Sort by Column = Calendar = CALENDARAUTO()
+
+Last Month Warning = 
+IF(
+	SELECTEDVALUE('Calendar'[Slicer Period]) = "Последний месяц", 
+	"Данные за "& FORMAT(MAX('Calendar'[StartOfMonth]),"MM-YYYY")
+	)
